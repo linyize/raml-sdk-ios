@@ -206,7 +206,7 @@ class DetailRamlContentDataProvider: NSObject {
                 case "big":
                     _font = UIFont.boldSystemFont(ofSize: fontSize)
                 case "h1","h2":
-                    _font = UIFont.boldSystemFont(ofSize: fontSize)                
+                    _font = DetailRamlContentDataProvider.h1Font()
                 case "h3":
                     _font = UIFont.systemFont(ofSize: fontSize)                    
                 case "small": // TODO: Line height
@@ -631,14 +631,18 @@ class DetailRamlContentDataProvider: NSObject {
     }
             
     class func detailSmallFont() -> UIFont {        
-        return UIFont.systemFont(ofSize: 11)
+        return UIFont.systemFont(ofSize: 13)
+    }
+    
+    class func h1Font() -> UIFont {
+        return UIFont.boldSystemFont(ofSize: 20)
     }
     
     class func detailBoldFont(_ ofSize: CGFloat) -> UIFont {        
-        return UIFont.boldSystemFont(ofSize: 11)
+        return UIFont.boldSystemFont(ofSize: ofSize)
     }
     
-    class func smallTextFont() -> UIFont {        
+    class func smallTextFont() -> UIFont {
         return UIFont.systemFont(ofSize: 12)
     }
     
