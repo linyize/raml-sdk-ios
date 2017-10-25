@@ -311,6 +311,8 @@ class DetailRamlContentDataProvider: NSObject {
                     mutableAttr.addAttributes([NSFontAttributeName: font as Any], range: range)
                 }
                 mutableAttr.addAttributes([NSForegroundColorAttributeName: fontColor], range: range)
+            } else if tag == "date" {
+                mutableAttr.addAttributes([NSForegroundColorAttributeName: dateTextColor()], range: range)
             } else if tag == "sup" {
                 mutableAttr.addAttributes([NSFontAttributeName: subSmallTextFont()], range: range)
                 mutableAttr.addAttributes([NSBaselineOffsetAttributeName: 10], range: range)
@@ -657,6 +659,10 @@ class DetailRamlContentDataProvider: NSObject {
     //Color
     func normalTextColor() -> UIColor {
         return setting.fontColor
-    }        
+    }
+    
+    class func dateTextColor() -> UIColor {
+        return UIColor(red:0.60, green:0.60, blue:0.60, alpha:1.00)
+    }
         
 }
