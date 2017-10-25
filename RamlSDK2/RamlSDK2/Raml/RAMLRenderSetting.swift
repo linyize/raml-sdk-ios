@@ -20,4 +20,5 @@ public class RAMLRenderSetting: NSObject {
     public var textLeftPadding:CGFloat = 10 
     public var textRightPadding:CGFloat = 10
     
+    public var backgroundColor:UIColor = UIColor.white
 }

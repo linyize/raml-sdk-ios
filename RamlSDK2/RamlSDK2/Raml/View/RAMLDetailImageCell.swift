@@ -20,6 +20,7 @@ class RAMLDetailImageCell: UICollectionViewCell {
     
     func setup() {
         contentView.addSubview(imageView)
+        contentView.backgroundColor = UIColor.clear;
     }
     
     func config(imageNode:HtmlImageNode) {

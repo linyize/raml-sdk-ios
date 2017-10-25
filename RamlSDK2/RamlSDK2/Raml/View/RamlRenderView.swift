@@ -37,7 +37,7 @@ public class RamlRenderView: UIView {
     
     func setup() {
         addSubview(collectionView)
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = setting.backgroundColor
         collectionView.register(RAMLDetailTextCell.self, forCellWithReuseIdentifier: "RAMLDetailTextCell")
         collectionView.register(RAMLDetailImageCell.self, forCellWithReuseIdentifier: "RAMLDetailImageCell")
         collectionView.register(RAMLDetailVideoCell.self, forCellWithReuseIdentifier: "RAMLDetailVideoCell")

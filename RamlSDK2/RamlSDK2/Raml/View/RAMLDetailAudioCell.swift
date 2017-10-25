@@ -22,7 +22,8 @@ class RAMLDetailAudioCell: UICollectionViewCell {
         addSubview(borderView)
         addSubview(imageView)
         addSubview(textLabel)
-        addSubview(playButton)                  
+        addSubview(playButton)
+        contentView.backgroundColor = .clear
     }
     
     func config(multimediaNode:HtmlMultimediaNode) {
@@ -70,6 +71,7 @@ class RAMLDetailAudioCell: UICollectionViewCell {
         let image = UIImage(named: "audio_card_icon", in: bundle, compatibleWith: nil)
         button.setImage(image, for: UIControlState.normal)
         button.frame = self.bounds
+        button.backgroundColor = .clear
         button.imageView?.contentMode = .center
         button.alpha = 0.7
         button.autoresizingMask = [.flexibleWidth,.flexibleHeight]
@@ -79,19 +81,20 @@ class RAMLDetailAudioCell: UICollectionViewCell {
     
     lazy var imageView:FLAnimatedImageView = {
         let imageView = FLAnimatedImageView()
-        imageView.backgroundColor = UIColor.gray
+        imageView.backgroundColor = .gray
         return imageView
     }()
     
     lazy var textLabel:UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
+        label.backgroundColor = .clear
         return label
     }()
     
     lazy var borderView:UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.clear
+        view.backgroundColor = .clear
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.black.cgColor
         return view

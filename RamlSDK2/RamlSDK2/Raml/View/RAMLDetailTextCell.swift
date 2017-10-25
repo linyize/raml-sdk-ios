@@ -19,6 +19,7 @@ class RAMLDetailTextCell: UICollectionViewCell {
     
     func setup() {
         contentView.addSubview(textLabel)
+        contentView.backgroundColor = .clear
     }
     
     func checkAttachImageLoadFinish(image: UIImage, attachment: InnerLineImageAttachment) {
@@ -73,6 +74,7 @@ class RAMLDetailTextCell: UICollectionViewCell {
     lazy var textLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
+        label.backgroundColor = .clear
         return label
     }()
 }
