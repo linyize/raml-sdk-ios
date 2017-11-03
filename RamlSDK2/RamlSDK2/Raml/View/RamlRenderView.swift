@@ -149,6 +149,10 @@ extension RamlRenderView : UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension RamlRenderView : UICollectionViewDelegate {
-    
+extension RamlRenderView : UIScrollViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (self.viewController != nil) && (self.viewController?.responds(to: Selector("scrollViewDidScroll:")))! {
+            self.viewController?.perform(Selector("scrollViewDidScroll:"), with: scrollView)
+        }
+    }
 }
