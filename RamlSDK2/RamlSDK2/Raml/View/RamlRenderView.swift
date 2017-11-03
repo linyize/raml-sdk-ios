@@ -80,6 +80,7 @@ public class RamlRenderView: UIView {
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         let collectionView = UICollectionView(frame: self.bounds, collectionViewLayout: layout)
+        collectionView.autoresizingMask = .flexibleHeight
         return collectionView 
     }()
     var setting:RAMLRenderSetting
@@ -146,6 +147,20 @@ extension RamlRenderView : UICollectionViewDelegateFlowLayout {
             }            
         }
         return CGSize(width: self.frame.size.width, height: 100)
+    }
+}
+
+extension RamlRenderView : UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let node = dataProvider.node(atIndexPath: indexPath.row) {
+            if node.isKind(of: HtmlImageNode.classForCoder()) {
+                let imageNode : HtmlImageNode =  node
+                if (self.viewController != nil) && (self.viewController?.responds(to: Selector("tapPic:")))! {
+                    self.viewController?.perform(Selector("tapPic:"), with: imageNode.imageURL)
+                }
+            }
+        }
+        
     }
 }
 
