@@ -125,23 +125,28 @@ class DetailRamlContentDataProvider: NSObject {
                 } else if (htmlTextNode.isImageSubTitle) {
                     htmlNode.top = 10
                 } else if let preTextNode = previousNode as? HtmlTextNode, preTextNode.isHeading {
-                    htmlNode.top = 14
+                    htmlNode.top = self.setting.fontSize;
                 } else {
-                    htmlNode.top = 14
+                    htmlNode.top = self.setting.fontSize;
                 }
             } else if previousNode is HtmlImageNode, let imageNode = htmlNode as? HtmlImageNode {
-                imageNode.top = 14
+                imageNode.top = self.setting.fontSize;
             } else {
                 if previousNode == nil {
                     htmlNode.top = 0
-                }else {
-                    htmlNode.top = 14
+                }
+                else {
+                    htmlNode.top = self.setting.fontSize;
                 }                
             }
             if (htmlNode.top > 0) {
                 htmlNode.top = htmlNode.top - 4
             }
             htmlNode.bottom = 4
+            
+            if let imageNode = htmlNode as? HtmlImageNode {
+                imageNode.top = self.setting.fontSize;
+            }
             
             nodeArray.append(htmlNode)
             previousNode = htmlNode
@@ -313,6 +318,8 @@ class DetailRamlContentDataProvider: NSObject {
                 mutableAttr.addAttributes([NSForegroundColorAttributeName: fontColor], range: range)
             } else if tag == "date" {
                 mutableAttr.addAttributes([NSForegroundColorAttributeName: dateTextColor()], range: range)
+            } else if tag == "baseline" {
+                mutableAttr.addAttributes([NSBaselineOffsetAttributeName: subJson["offset"].float ?? 5], range: range)
             } else if tag == "sup" {
                 mutableAttr.addAttributes([NSFontAttributeName: subSmallTextFont()], range: range)
                 mutableAttr.addAttributes([NSBaselineOffsetAttributeName: 10], range: range)
