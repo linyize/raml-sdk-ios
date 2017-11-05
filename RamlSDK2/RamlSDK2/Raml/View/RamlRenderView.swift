@@ -154,7 +154,7 @@ extension RamlRenderView : UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let node = dataProvider.node(atIndexPath: indexPath.row) {
             if node.isKind(of: HtmlImageNode.classForCoder()) {
-                let imageNode : HtmlImageNode =  node
+                let imageNode = node as! HtmlImageNode
                 if (self.viewController != nil) && (self.viewController?.responds(to: Selector("tapPic:")))! {
                     self.viewController?.perform(Selector("tapPic:"), with: imageNode.imageURL)
                 }
