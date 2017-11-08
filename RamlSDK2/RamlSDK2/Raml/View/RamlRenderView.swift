@@ -17,6 +17,7 @@ public class RamlRenderView: UIView {
         let setting = RAMLRenderSetting()
         self.dataProvider = DetailRamlContentDataProvider(setting: setting)
         self.setting = setting
+        self.initialOffsetY = 0
         super.init(frame: frame)
         setup()
         loadContent()
@@ -26,6 +27,7 @@ public class RamlRenderView: UIView {
         self.contentHtml = contentHtml         
         self.setting = setting
         self.dataProvider = DetailRamlContentDataProvider(setting: setting)
+        self.initialOffsetY = 0
         super.init(frame: frame)
         setup()
         loadContent()
@@ -52,6 +54,9 @@ public class RamlRenderView: UIView {
             self?.collectionView.reloadData()
 //            let count = self?.dataProvider.numberOfNode()
 //            print("parse complete \(count)")
+            
+            // 初始位置
+            self?.collectionView.setContentOffset(CGPoint(x:0, y:(self?.initialOffsetY)!), animated: true)
         }        
         dataProvider.parseModel(contentHtml: self.contentHtml, async: true)
     }
@@ -88,6 +93,7 @@ public class RamlRenderView: UIView {
     let contentHtml:String
     
     public var viewController:UIViewController?
+    public var initialOffsetY:CGFloat
 }
 
 extension RamlRenderView : UICollectionViewDataSource {
