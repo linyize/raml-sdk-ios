@@ -79,7 +79,7 @@ public class RamlRenderView: UIView {
 //    }
 
     //Property
-    lazy var collectionView:UICollectionView = {
+    public lazy var collectionView:UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
