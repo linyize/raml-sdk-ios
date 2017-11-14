@@ -125,28 +125,24 @@ class DetailRamlContentDataProvider: NSObject {
                 } else if (htmlTextNode.isImageSubTitle) {
                     htmlNode.top = 10
                 } else if let preTextNode = previousNode as? HtmlTextNode, preTextNode.isHeading {
-                    htmlNode.top = self.setting.fontSize;
+                    htmlNode.top = 14;
                 } else {
-                    htmlNode.top = self.setting.fontSize;
+                    htmlNode.top = 14;
                 }
             } else if previousNode is HtmlImageNode, let imageNode = htmlNode as? HtmlImageNode {
-                imageNode.top = self.setting.fontSize;
+                imageNode.top = 14;
             } else {
                 if previousNode == nil {
                     htmlNode.top = 0
                 }
                 else {
-                    htmlNode.top = self.setting.fontSize;
+                    htmlNode.top = 14;
                 }                
             }
             if (htmlNode.top > 0) {
                 htmlNode.top = htmlNode.top - 4
             }
             htmlNode.bottom = 4
-            
-            if let imageNode = htmlNode as? HtmlImageNode {
-                imageNode.top = self.setting.fontSize;
-            }
             
             nodeArray.append(htmlNode)
             previousNode = htmlNode
