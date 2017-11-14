@@ -31,12 +31,12 @@ class RAMLDetailVideoCell: UICollectionViewCell {
             imageView.sd_setShowActivityIndicatorView(true)
             imageView.sd_setImage(with: url)
         }
-        imageView.frame = self.bounds
+        imageView.frame = CGRect(x: 0, y: multimediaNode.top, width: self.bounds.size.width, height: multimediaNode.contentHeight)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        imageView.frame = self.bounds
+        imageView.frame = CGRect(x: 0, y: (self.multimediaNode?.top)!, width: self.bounds.size.width, height: (self.multimediaNode?.contentHeight)!)
         playButton.frame = self.bounds
     }
     
