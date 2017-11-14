@@ -118,9 +118,9 @@ class DetailRamlContentDataProvider: NSObject {
                 let size = sizeOfTextNode(node: htmlTextNode)
                 htmlTextNode.contentWidth = self.contentMaxWidth
                 htmlTextNode.contentHeight = size.height
-                if previousNode == nil {
+                /*if previousNode == nil {
                     htmlNode.top = 14
-                } else if (htmlTextNode.isHeading) {
+                } else */if (htmlTextNode.isHeading) {
                     htmlNode.top = 28
                 } else if (htmlTextNode.isImageSubTitle) {
                     htmlNode.top = 10
@@ -212,6 +212,7 @@ class DetailRamlContentDataProvider: NSObject {
                     _font = UIFont.boldSystemFont(ofSize: fontSize)
                 case "h1","h2":
                     _font = DetailRamlContentDataProvider.h1Font()
+                    textNode.isHeading = true
                 case "h3":
                     _font = UIFont.systemFont(ofSize: fontSize)                    
                 case "small": // TODO: Line height
