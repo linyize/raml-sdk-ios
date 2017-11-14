@@ -18,6 +18,7 @@
 		7FDE459C1F3DF459001A515F /* article2.json in Resources */ = {isa = PBXBuildFile; fileRef = 7FDE45991F3DF459001A515F /* article2.json */; };
 		7FDE459D1F3DF459001A515F /* article.json in Resources */ = {isa = PBXBuildFile; fileRef = 7FDE459A1F3DF459001A515F /* article.json */; };
 		7FEFEBF51FAEBE2D00099024 /* article5.json in Resources */ = {isa = PBXBuildFile; fileRef = 7FEFEBF41FAEBE2C00099024 /* article5.json */; };
+		9CCB0F6D1FBAD1EA00A69737 /* article6.json in Resources */ = {isa = PBXBuildFile; fileRef = 9CCB0F6C1FBAD1E900A69737 /* article6.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		7FDE45991F3DF459001A515F /* article2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = article2.json; sourceTree = "<group>"; };
 		7FDE459A1F3DF459001A515F /* article.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = article.json; sourceTree = "<group>"; };
 		7FEFEBF41FAEBE2C00099024 /* article5.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = article5.json; sourceTree = "<group>"; };
+		9CCB0F6C1FBAD1E900A69737 /* article6.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = article6.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 		7FDE45971F3DF459001A515F /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				9CCB0F6C1FBAD1E900A69737 /* article6.json */,
 				7FEFEBF41FAEBE2C00099024 /* article5.json */,
 				01CB131F1F9F1F9400146459 /* article4.json */,
 				7FDE45981F3DF459001A515F /* article3.json */,
@@ -159,6 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7FDE459B1F3DF459001A515F /* article3.json in Resources */,
+				9CCB0F6D1FBAD1EA00A69737 /* article6.json in Resources */,
 				7FDE458D1F3DF34E001A515F /* LaunchScreen.storyboard in Resources */,
 				7FDE459D1F3DF459001A515F /* article.json in Resources */,
 				7FDE458A1F3DF34E001A515F /* Assets.xcassets in Resources */,
