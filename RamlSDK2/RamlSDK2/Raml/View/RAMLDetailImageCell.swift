@@ -37,17 +37,18 @@ class RAMLDetailImageCell: UICollectionViewCell {
                         strongifySelf.reloadUnknowSizeBlock?()
                     }                    
                 })    
-            }else {
+            }
+            else {
                 imageView.sd_setImage(with: url)
             }
             
         }
-        imageView.frame = self.bounds
+        imageView.frame = CGRect(x: 0, y: imageNode.top, width: self.bounds.size.width, height: imageNode.contentHeight)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        imageView.frame = self.bounds
+        imageView.frame = CGRect(x: 0, y: (self.imageNode?.top)!, width: self.bounds.size.width, height: (self.imageNode?.contentHeight)!)
     }
     
     //Other
