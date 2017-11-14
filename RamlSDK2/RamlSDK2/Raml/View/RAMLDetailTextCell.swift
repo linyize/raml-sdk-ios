@@ -80,7 +80,7 @@ class RAMLDetailTextCell: UICollectionViewCell {
             //            textLabel.frame = self.bounds;
             let leftPadding = textNode?.textLeftPadding ?? 0
             let rightPadding = textNode?.textRightPadding ?? 0
-            textLabel.frame = CGRect(x: leftPadding, y: 0, width: frame.size.width - rightPadding - leftPadding, height: frame.size.height)
+            textLabel.frame = CGRect(x: leftPadding, y: (textNode?.top)!, width: frame.size.width - rightPadding - leftPadding, height: frame.size.height - (textNode?.top)! - (textNode?.bottom)!)
         }
     }
     
