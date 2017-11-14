@@ -119,7 +119,7 @@ class DetailRamlContentDataProvider: NSObject {
                 htmlTextNode.contentWidth = self.contentMaxWidth
                 htmlTextNode.contentHeight = size.height
                 if previousNode == nil {
-                    htmlNode.top = 0
+                    htmlNode.top = 14
                 } else if (htmlTextNode.isHeading) {
                     htmlNode.top = 28
                 } else if (htmlTextNode.isImageSubTitle) {
@@ -133,7 +133,7 @@ class DetailRamlContentDataProvider: NSObject {
                 imageNode.top = 14;
             } else {
                 if previousNode == nil {
-                    htmlNode.top = 0
+                    htmlNode.top = 14
                 }
                 else {
                     htmlNode.top = 14;
@@ -143,6 +143,10 @@ class DetailRamlContentDataProvider: NSObject {
                 htmlNode.top = htmlNode.top - 4
             }
             htmlNode.bottom = 4
+            
+            if let imageHtmlNode = htmlNode as? HtmlImageNode {
+                imageHtmlNode.bottom = 12
+            }
             
             nodeArray.append(htmlNode)
             previousNode = htmlNode
