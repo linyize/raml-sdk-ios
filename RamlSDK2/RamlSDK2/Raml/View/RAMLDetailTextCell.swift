@@ -8,7 +8,7 @@
 
 import UIKit
 import SDWebImage
-import TTTAttributedLabel
+//import TTTAttributedLabel
 
 class RAMLDetailTextCell: UICollectionViewCell {
     
@@ -22,13 +22,13 @@ class RAMLDetailTextCell: UICollectionViewCell {
         contentView.addSubview(textLabel)
         contentView.backgroundColor = .clear
     
-        textLabel.isUserInteractionEnabled = true
-        textLabel.delegate = self
-        textLabel.lineBreakMode = .byTruncatingTail
-        textLabel.numberOfLines = 0
-        
-        let dashed = NSUnderlineStyle.patternDot.rawValue | NSUnderlineStyle.styleSingle.rawValue
-        textLabel.linkAttributes = [NSUnderlineStyleAttributeName: NSNumber(value: dashed)]
+//        textLabel.isUserInteractionEnabled = true
+//        textLabel.delegate = self
+//        textLabel.lineBreakMode = .byTruncatingTail
+//        textLabel.numberOfLines = 0
+//
+//        let dashed = NSUnderlineStyle.patternDot.rawValue | NSUnderlineStyle.styleSingle.rawValue
+//        textLabel.linkAttributes = [NSUnderlineStyleAttributeName: NSNumber(value: dashed)]
     }
     
     func magazineLogo(image: UIImage) -> UIImage {
@@ -69,16 +69,16 @@ class RAMLDetailTextCell: UICollectionViewCell {
         self.textNode = textNode
         if let contentString = textNode.contentString {
             textLabel.attributedText = contentString
-            contentString.enumerateAttribute(NSLinkAttributeName, in: NSRange(location: 0, length: contentString.length), options: NSAttributedString.EnumerationOptions.reverse, using: {
-                [weak self] (value, range, stop) in
-                guard let value = value else {
-                    return
-                }
-                if let url = value as? URL {
-                    _ = self?.textLabel.addLink(to: url, with: range)   
-                }            
-            })    
-        }                 
+//            contentString.enumerateAttribute(NSLinkAttributeName, in: NSRange(location: 0, length: contentString.length), options: NSAttributedString.EnumerationOptions.reverse, using: {
+//                [weak self] (value, range, stop) in
+//                guard let value = value else {
+//                    return
+//                }
+//                if let url = value as? URL {
+//                    _ = self?.textLabel.addLink(to: url, with: range)
+//                }
+//            })
+        }
         for attach in textNode.imageAttachArray {
             let urlStr = attach.imageURL
             SDWebImageManager.shared().loadImage(with: URL(string: urlStr), options: SDWebImageOptions.avoidAutoSetImage, progress: { _, _, _ in                
@@ -108,14 +108,22 @@ class RAMLDetailTextCell: UICollectionViewCell {
     
     var onLinkTappedActionBlock: ((URL) -> Void)?
     
-    lazy var textLabel: TTTAttributedLabel = {        
-        let label = TTTAttributedLabel(frame: .zero)
+//    lazy var textLabel: TTTAttributedLabel = {
+//        let label = TTTAttributedLabel(frame: .zero)
+//        return label
+//    }()
+    
+    lazy var textLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.backgroundColor = .clear
         return label
     }()
 }
 
-extension RAMLDetailTextCell : TTTAttributedLabelDelegate {
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {        
-        onLinkTappedActionBlock?(url)
-    }   
-}
+//extension RAMLDetailTextCell : TTTAttributedLabelDelegate {
+//    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {        
+//        onLinkTappedActionBlock?(url)
+//    }   
+//}
+

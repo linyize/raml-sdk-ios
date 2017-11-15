@@ -33,10 +33,10 @@ class ViewController: UIViewController {
                 
                 self.ramlView = view
                 
-                view.onLinkTappedActionBlock = {
-                    [weak self] url in
-                    print(url)
-                }
+//                view.onLinkTappedActionBlock = {
+//                    [weak self] url in
+//                    print(url)
+//                }
             } catch {
                 
             }
