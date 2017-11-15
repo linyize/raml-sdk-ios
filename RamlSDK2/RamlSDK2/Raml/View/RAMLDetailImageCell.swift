@@ -28,15 +28,27 @@ class RAMLDetailImageCell: UICollectionViewCell {
         if let urlStr = imageNode.imageURL, let url = URL(string:urlStr){
             imageView.sd_setShowActivityIndicatorView(true)
             if imageNode.isUnknownSize {
-                imageView.sd_setImage(with: url, completed: {[weak self, unowned imageNode] (image, error, type, url) in
-                    if let image = image, let strongifySelf = self {
-                        imageNode.isUnknownSize = false
-                        imageNode.imageWidth = strongifySelf.frame.size.width
-                        imageNode.imageHeight = image.size.height * (imageNode.imageWidth/image.size.width)
-                        imageNode.contentHeight = imageNode.imageHeight 
-                        strongifySelf.reloadUnknowSizeBlock?()
-                    }                    
-                })    
+                let cacheKey = SDWebImageManager.shared().cacheKey(for: url)
+                let cachedImage = SDImageCache.shared().imageFromCache(forKey: cacheKey)
+                if (cachedImage != nil) {
+                    imageView.image = cachedImage
+                    imageNode.isUnknownSize = false
+                    imageNode.imageWidth = imageNode.contentWidth
+                    imageNode.imageHeight = (cachedImage?.size.height ?? 200) * (imageNode.imageWidth/(cachedImage?.size.width ?? 200))
+                    imageNode.contentHeight = imageNode.imageHeight
+                }
+                else {
+                    imageView.sd_setImage(with: url, completed: {[weak self, unowned imageNode] (image, error, type, url) in
+                        if let image = image, let strongifySelf = self {
+                            imageNode.isUnknownSize = false
+                            imageNode.imageWidth = imageNode.contentWidth
+                            imageNode.imageHeight = image.size.height * (imageNode.imageWidth/image.size.width)
+                            imageNode.contentHeight = imageNode.imageHeight
+                            NSLog("%f", imageNode.contentHeight)
+                            strongifySelf.reloadUnknowSizeBlock?()
+                        }
+                    })
+                }
             }
             else {
                 imageView.sd_setImage(with: url)

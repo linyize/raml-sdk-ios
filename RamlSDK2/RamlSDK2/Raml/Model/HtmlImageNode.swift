@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class HtmlImageNode: HtmlNode {
     var imageURL:String?
@@ -14,4 +15,19 @@ class HtmlImageNode: HtmlNode {
     var imageHeight:CGFloat = 0
     var isUnknownSize = false
     var titleTextNode:HtmlTextNode?
+    
+    override var rowHeight:CGFloat {
+        get {
+            let url = URL(string:self.imageURL!)
+            let cacheKey = SDWebImageManager.shared().cacheKey(for: url)
+            let cachedImage = SDImageCache.shared().imageFromCache(forKey: cacheKey)
+            if (cachedImage != nil) {
+                self.isUnknownSize = false
+                self.imageWidth = self.contentWidth
+                self.imageHeight = (cachedImage?.size.height ?? 200) * (self.imageWidth/(cachedImage?.size.width ?? 200))
+                self.contentHeight = self.imageHeight
+            }
+            return self.contentHeight + self.top + self.bottom
+        }
+    }
 }
