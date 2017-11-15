@@ -27,7 +27,7 @@ class ViewController: UIViewController {
                                           contentHtml: contentHtml, 
                                           setting:setting)
                 view.viewController = self
-                self.view.addSubview(view)
+                self.view.insertSubview(view, at: 0)
             } catch {
                 
             }
@@ -36,5 +36,27 @@ class ViewController: UIViewController {
     }
 
 
+    @IBAction func re(_ sender: Any) {
+        if let path = Bundle.main.path(forResource: "article7", ofType: "json") {
+            do {
+                let str = try String(contentsOfFile: path)
+                let json = JSON(parseJSON:str)
+                let articleJson = json["article"]
+                let contentHtml = articleJson["contentHtml"].stringValue
+                let setting = RAMLRenderSetting()
+                setting.fontColor = .black
+                setting.fontSize = 16
+                let view = RamlRenderView(frame: self.view.bounds,
+                                          contentHtml: contentHtml,
+                                          setting:setting)
+                view.viewController = self
+                let oldview  = self.view.subviews[0]
+                oldview.removeFromSuperview()
+                self.view.insertSubview(view, at: 0)
+            } catch {
+                
+            }
+        }
+    }
 }
 
