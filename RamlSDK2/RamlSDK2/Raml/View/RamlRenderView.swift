@@ -106,16 +106,18 @@ extension RamlRenderView : UICollectionViewDataSource {
                     cell.config(textNode: textNode)
                     return cell
                 } 
-            }else if let imageNode = node as? HtmlImageNode {
+            }
+            else if let imageNode = node as? HtmlImageNode {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailImageCell", for: indexPath) as? RAMLDetailImageCell {
                     cell.config(imageNode: imageNode)
                     cell.reloadUnknowSizeBlock = {
                         [weak self] in        
-                        self?.collectionView.reloadItems(at: [indexPath])         
+                        self?.collectionView.reloadItems(at: [indexPath])
                     }
                     return cell
                 }
-            }else if let multimediaNode = node as? HtmlMultimediaNode {
+            }
+            else if let multimediaNode = node as? HtmlMultimediaNode {
                 if multimediaNode.isAudio {
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailAudioCell", for: indexPath) as? RAMLDetailAudioCell {
                         cell.config(multimediaNode: multimediaNode)
@@ -125,7 +127,8 @@ extension RamlRenderView : UICollectionViewDataSource {
                         }
                         return cell
                     }
-                }else {
+                }
+                else {
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailVideoCell", for: indexPath) as? RAMLDetailVideoCell {
                         cell.config(multimediaNode: multimediaNode)
                         cell.playBlock = {
