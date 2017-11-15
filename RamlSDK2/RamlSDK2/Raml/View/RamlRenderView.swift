@@ -47,6 +47,11 @@ public class RamlRenderView: UIView {
     }
     
     func setup() {
+//        if #available(iOS 11.0, *) {
+//            collectionView.contentInsetAdjustmentBehavior = .never
+//        } else {
+//            // Fallback on earlier versions
+//        }
         addSubview(collectionView)
         collectionView.backgroundColor = setting.backgroundColor
         collectionView.register(RAMLDetailTextCell.self, forCellWithReuseIdentifier: "RAMLDetailTextCell")
@@ -177,11 +182,14 @@ public class RamlRenderView: UIView {
     var setting:RAMLRenderSetting
     let dataProvider:DetailRamlContentDataProvider
     let contentHtml:String
-    
+
     var pageIndex:Int
     var pageArray:Array<Array<Int>>
 
     public var delegate:RamlRenderViewDelegate?
+
+    public var onLinkTappedActionBlock: ((URL) -> Void)?
+
     public var viewController:UIViewController?
 }
 
@@ -209,6 +217,10 @@ extension RamlRenderView : UICollectionViewDataSource {
             if let textNode = node as? HtmlTextNode {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailTextCell", for: indexPath) as? RAMLDetailTextCell {
                     cell.config(textNode: textNode)
+                    cell.onLinkTappedActionBlock = {
+                        [weak self] url in
+                        self?.onLinkTappedActionBlock?(url)
+                    }
                     return cell
                 } 
             }

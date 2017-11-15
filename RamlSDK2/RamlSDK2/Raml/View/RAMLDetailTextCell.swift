@@ -8,6 +8,7 @@
 
 import UIKit
 import SDWebImage
+import TTTAttributedLabel
 
 class RAMLDetailTextCell: UICollectionViewCell {
     
@@ -20,6 +21,14 @@ class RAMLDetailTextCell: UICollectionViewCell {
     func setup() {
         contentView.addSubview(textLabel)
         contentView.backgroundColor = .clear
+    
+        textLabel.isUserInteractionEnabled = true
+        textLabel.delegate = self
+        textLabel.lineBreakMode = .byTruncatingTail
+        textLabel.numberOfLines = 0
+        
+        let dashed = NSUnderlineStyle.patternDot.rawValue | NSUnderlineStyle.styleSingle.rawValue
+        textLabel.linkAttributes = [NSUnderlineStyleAttributeName: NSNumber(value: dashed)]
     }
     
     func magazineLogo(image: UIImage) -> UIImage {
@@ -58,11 +67,21 @@ class RAMLDetailTextCell: UICollectionViewCell {
     func config(textNode: HtmlTextNode) {
         setup()
         self.textNode = textNode
-        textLabel.attributedText = textNode.contentString
+        if let contentString = textNode.contentString {
+            textLabel.attributedText = contentString
+            contentString.enumerateAttribute(NSLinkAttributeName, in: NSRange(location: 0, length: contentString.length), options: NSAttributedString.EnumerationOptions.reverse, using: {
+                [weak self] (value, range, stop) in
+                guard let value = value else {
+                    return
+                }
+                if let url = value as? URL {
+                    _ = self?.textLabel.addLink(to: url, with: range)   
+                }            
+            })    
+        }                 
         for attach in textNode.imageAttachArray {
             let urlStr = attach.imageURL
-            SDWebImageManager.shared().loadImage(with: URL(string: urlStr), options: SDWebImageOptions.avoidAutoSetImage, progress: { _, _, _ in
-                
+            SDWebImageManager.shared().loadImage(with: URL(string: urlStr), options: SDWebImageOptions.avoidAutoSetImage, progress: { _, _, _ in                
             }, completed: {[weak self, weak attach] image, _, _, _, _, _ in
                 if let attachment = attach, let image = image {
                     self?.checkAttachImageLoadFinish(image: image, attachment: attachment)   
@@ -78,7 +97,8 @@ class RAMLDetailTextCell: UICollectionViewCell {
         let rightPadding = textNode?.textRightPadding ?? 0
         let top = textNode?.top ?? 0
         let bottom = textNode?.bottom ?? 0
-        textLabel.frame = CGRect(x: leftPadding, y: top, width: frame.size.width - rightPadding - leftPadding, height: frame.size.height - top - bottom)
+        let maxWidth = frame.size.width - rightPadding - leftPadding
+        textLabel.frame = CGRect(x: leftPadding, y: top, width: maxWidth, height: frame.size.height - top - bottom)
     }
     
     // Other
@@ -86,10 +106,16 @@ class RAMLDetailTextCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    lazy var textLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.backgroundColor = .clear
+    var onLinkTappedActionBlock: ((URL) -> Void)?
+    
+    lazy var textLabel: TTTAttributedLabel = {        
+        let label = TTTAttributedLabel(frame: .zero)
         return label
     }()
+}
+
+extension RAMLDetailTextCell : TTTAttributedLabelDelegate {
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {        
+        onLinkTappedActionBlock?(url)
+    }   
 }
