@@ -603,11 +603,17 @@ class DetailRamlContentDataProvider: NSObject {
     
     @available(*, deprecated)
     func node(atIndexPath row: Int, width: CGFloat) -> HtmlNode! {
-        return contentNodeArray[row]
+        if row < contentNodeArray.count {
+            return contentNodeArray[row]
+        }
+        return nil
     }
     
     func node(atIndexPath row: Int) -> HtmlNode! {
-        return contentNodeArray[row]
+        if row < contentNodeArray.count {
+            return contentNodeArray[row]
+        }
+        return nil
     }
     
     func imutableImageArray() -> [HtmlImageNode] {

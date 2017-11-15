@@ -10,6 +10,13 @@ import UIKit
 import AVFoundation
 import AVKit
 
+@objc public protocol RamlRenderViewDelegate : NSObjectProtocol {
+    @objc optional func updatePage(_ index: Int, count: Int) -> Void
+    @objc optional func didLoadContent() -> Void
+    @objc optional func tapPic(_ imageURL: String?) -> Void
+    @objc optional func scrollViewDidScroll(_ scrollView: UIScrollView) -> Void
+}
+
 public class RamlRenderView: UIView {
     
     public init(frame: CGRect, contentHtml:String) {
@@ -17,6 +24,8 @@ public class RamlRenderView: UIView {
         let setting = RAMLRenderSetting()
         self.dataProvider = DetailRamlContentDataProvider(setting: setting)
         self.setting = setting
+        self.pageIndex = 0
+        self.pageArray = Array()
         super.init(frame: frame)
         setup()
         loadContent()
@@ -26,6 +35,8 @@ public class RamlRenderView: UIView {
         self.contentHtml = contentHtml         
         self.setting = setting
         self.dataProvider = DetailRamlContentDataProvider(setting: setting)
+        self.pageIndex = 0
+        self.pageArray = Array()
         super.init(frame: frame)
         setup()
         loadContent()
@@ -46,15 +57,91 @@ public class RamlRenderView: UIView {
         collectionView.delegate = self
     }
     
+    public func next() {
+        if pageIndex + 1 < pageArray.count {
+            pageIndex += 1
+        }
+        self.collectionView.reloadData()
+        
+        if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
+            self.delegate?.updatePage!(pageIndex, count: pageArray.count)
+        }
+    }
+    
+    public func prev() {
+        if pageIndex > 0 {
+            pageIndex -= 1
+        }
+        self.collectionView.reloadData()
+        
+        if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
+            self.delegate?.updatePage!(pageIndex, count: pageArray.count)
+        }
+    }
+    
+    func calcPage() {
+        var pageHeight: CGFloat = 0
+        var page : Int = 1
+        var begin : Int = 0
+        var end : Int = 0
+        let count = dataProvider.numberOfNode()
+        for i in 0 ... (count - 1) {
+            let node = dataProvider.node(atIndexPath: i)
+            let nodeHeight = node?.contentSize.height ?? 0
+            pageHeight += nodeHeight
+            if pageHeight > frame.size.height {
+                begin = (end == 0) ? 0 : end + 1
+                if page > 1 && end == 0 {
+                    begin = 1
+                }
+                if i - 1 > 0 {
+                    let gap = frame.size.height - pageHeight + nodeHeight;
+                    let over = pageHeight - frame.size.height;
+                    if (gap - over > 100) {
+                        end = i
+                        NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
+                        pageHeight = 0
+                    }
+                    else {
+                        end = i - 1
+                        NSLog("%f %d=(%d, %d)", pageHeight - nodeHeight, page, begin, end)
+                        pageHeight = nodeHeight
+                    }
+                }
+                else {
+                    end = 0
+                    NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
+                    pageHeight = 0
+                }
+                
+                pageArray.append([begin, end])
+                page += 1
+            }
+        }
+        if count-1 > end {
+            begin = end + 1
+            end = count - 1
+            NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
+            pageArray.append([begin, end])
+        }
+        
+        if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
+            self.delegate?.updatePage!(pageIndex, count: pageArray.count)
+        }
+    }
+    
     func loadContent() {
         dataProvider.htmlParseDoneBlock = {
-            [weak self] in            
+            [weak self] in
+            // 计算页高
+            self?.calcPage()
+            
             self?.collectionView.reloadData()
 //            let count = self?.dataProvider.numberOfNode()
 //            print("parse complete \(count)")
             
-            if (self?.viewController != nil) && (self?.viewController?.responds(to: Selector(("didLoadContent"))))! {
-                self?.viewController?.perform(Selector(("didLoadContent")))
+            if (self?.delegate?.responds(to: #selector(RamlRenderViewDelegate.didLoadContent)))! {
+                self?.delegate?.didLoadContent!()
             }
         }        
         dataProvider.parseModel(contentHtml: self.contentHtml, async: true)
@@ -91,16 +178,34 @@ public class RamlRenderView: UIView {
     let dataProvider:DetailRamlContentDataProvider
     let contentHtml:String
     
+    var pageIndex:Int
+    var pageArray:Array<Array<Int>>
+
+    public var delegate:RamlRenderViewDelegate?
     public var viewController:UIViewController?
 }
 
 extension RamlRenderView : UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataProvider.numberOfNode()
+        //return dataProvider.numberOfNode()
+        
+        if pageIndex < pageArray.count {
+            let range = pageArray[pageIndex]
+            return range[1] - range[0] + 1
+        }
+        return 0
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let node = dataProvider.node(atIndexPath: indexPath.row) {
+        if pageIndex >= pageArray.count {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailTextCell", for: indexPath)
+            return cell
+        }
+        
+        let range = pageArray[pageIndex]
+        let realIndex = range[0] + indexPath.row
+        
+        if let node = dataProvider.node(atIndexPath: realIndex) {
             if let textNode = node as? HtmlTextNode {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailTextCell", for: indexPath) as? RAMLDetailTextCell {
                     cell.config(textNode: textNode)
@@ -148,7 +253,14 @@ extension RamlRenderView : UICollectionViewDataSource {
 
 extension RamlRenderView : UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if let node = dataProvider.node(atIndexPath: indexPath.row) {
+        if pageIndex >= pageArray.count {
+            return CGSize(width: self.frame.size.width, height: 100)
+        }
+        
+        let range = pageArray[pageIndex]
+        let realIndex = range[0] + indexPath.row
+        
+        if let node = dataProvider.node(atIndexPath: realIndex) {
             if node.contentSize.width > 0 {
                 return node.contentSize
             }            
@@ -159,11 +271,18 @@ extension RamlRenderView : UICollectionViewDelegateFlowLayout {
 
 extension RamlRenderView : UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let node = dataProvider.node(atIndexPath: indexPath.row) {
+        if pageIndex >= pageArray.count {
+            return
+        }
+        
+        let range = pageArray[pageIndex]
+        let realIndex = range[0] + indexPath.row
+        
+        if let node = dataProvider.node(atIndexPath: realIndex) {
             if node.isKind(of: HtmlImageNode.classForCoder()) {
                 let imageNode = node as! HtmlImageNode
-                if (self.viewController != nil) && (self.viewController?.responds(to: Selector("tapPic:")))! {
-                    self.viewController?.perform(Selector("tapPic:"), with: imageNode.imageURL)
+                if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.tapPic(_:))))! {
+                    self.delegate?.tapPic!(imageNode.imageURL)
                 }
             }
         }
@@ -173,8 +292,8 @@ extension RamlRenderView : UICollectionViewDelegate {
 
 extension RamlRenderView : UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (self.viewController != nil) && (self.viewController?.responds(to: Selector("scrollViewDidScroll:")))! {
-            self.viewController?.perform(Selector("scrollViewDidScroll:"), with: scrollView)
+        if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.scrollViewDidScroll(_:))))! {
+            self.delegate?.scrollViewDidScroll!(scrollView)
         }
     }
 }
