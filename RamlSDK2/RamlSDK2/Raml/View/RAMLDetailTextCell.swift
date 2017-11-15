@@ -73,15 +73,12 @@ class RAMLDetailTextCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        if let textNode = self.textNode, textNode.shouldAlignCenter {
-            textLabel.sizeToFit()
-            textLabel.center = CGPoint(x: frame.width / 2, y: frame.height / 2)
-        } else {
-            //            textLabel.frame = self.bounds;
-            let leftPadding = textNode?.textLeftPadding ?? 0
-            let rightPadding = textNode?.textRightPadding ?? 0
-            textLabel.frame = CGRect(x: leftPadding, y: (textNode?.top)!, width: frame.size.width - rightPadding - leftPadding, height: frame.size.height - (textNode?.top)! - (textNode?.bottom)!)
-        }
+
+        let leftPadding = textNode?.textLeftPadding ?? 0
+        let rightPadding = textNode?.textRightPadding ?? 0
+        let top = textNode?.top ?? 0
+        let bottom = textNode?.bottom ?? 0
+        textLabel.frame = CGRect(x: leftPadding, y: top, width: frame.size.width - rightPadding - leftPadding, height: frame.size.height - top - bottom)
     }
     
     // Other
