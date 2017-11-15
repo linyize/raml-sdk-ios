@@ -12,6 +12,7 @@ import AVKit
 
 @objc public protocol RamlRenderViewDelegate : NSObjectProtocol {
     @objc optional func updatePage(_ index: Int, count: Int) -> Void
+    @objc optional func willLoadContent() -> Void
     @objc optional func didLoadContent() -> Void
     @objc optional func tapPic(_ imageURL: String?) -> Void
     @objc optional func scrollViewDidScroll(_ scrollView: UIScrollView) -> Void
@@ -65,26 +66,26 @@ public class RamlRenderView: UIView {
     public func next() {
         if pageIndex + 1 < pageArray.count {
             pageIndex += 1
-        }
-        self.collectionView.reloadData()
-        
-        if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
-            self.delegate?.updatePage!(pageIndex, count: pageArray.count)
+            self.collectionView.reloadData()
+            
+            if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
+                self.delegate?.updatePage!(pageIndex, count: pageArray.count)
+            }
         }
     }
     
     public func prev() {
         if pageIndex > 0 {
             pageIndex -= 1
-        }
-        self.collectionView.reloadData()
-        
-        if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
-            self.delegate?.updatePage!(pageIndex, count: pageArray.count)
+            self.collectionView.reloadData()
+            
+            if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
+                self.delegate?.updatePage!(pageIndex, count: pageArray.count)
+            }
         }
     }
     
-    func calcPage() {
+    public func calcPage() {
         var pageHeight: CGFloat = 0
         var page : Int = 1
         var begin : Int = 0
@@ -138,8 +139,10 @@ public class RamlRenderView: UIView {
     func loadContent() {
         dataProvider.htmlParseDoneBlock = {
             [weak self] in
-            // 计算页高
-            self?.calcPage()
+            
+            if (self?.delegate?.responds(to: #selector(RamlRenderViewDelegate.willLoadContent)))! {
+                self?.delegate?.willLoadContent!()
+            }
             
             self?.collectionView.reloadData()
 //            let count = self?.dataProvider.numberOfNode()
@@ -195,24 +198,19 @@ public class RamlRenderView: UIView {
 
 extension RamlRenderView : UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        //return dataProvider.numberOfNode()
-        
         if pageIndex < pageArray.count {
             let range = pageArray[pageIndex]
             return range[1] - range[0] + 1
         }
-        return 0
+        return dataProvider.numberOfNode()
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if pageIndex >= pageArray.count {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailTextCell", for: indexPath)
-            return cell
+        var realIndex = indexPath.row
+        if pageIndex < pageArray.count {
+            let range = pageArray[pageIndex]
+            realIndex = range[0] + indexPath.row
         }
-        
-        let range = pageArray[pageIndex]
-        let realIndex = range[0] + indexPath.row
-        
         if let node = dataProvider.node(atIndexPath: realIndex) {
             if let textNode = node as? HtmlTextNode {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailTextCell", for: indexPath) as? RAMLDetailTextCell {
@@ -265,12 +263,11 @@ extension RamlRenderView : UICollectionViewDataSource {
 
 extension RamlRenderView : UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if pageIndex >= pageArray.count {
-            return CGSize(width: self.frame.size.width, height: 100)
+        var realIndex = indexPath.row
+        if pageIndex < pageArray.count {
+            let range = pageArray[pageIndex]
+            realIndex = range[0] + indexPath.row
         }
-        
-        let range = pageArray[pageIndex]
-        let realIndex = range[0] + indexPath.row
         
         if let node = dataProvider.node(atIndexPath: realIndex) {
             if node.contentSize.width > 0 {
@@ -283,12 +280,11 @@ extension RamlRenderView : UICollectionViewDelegateFlowLayout {
 
 extension RamlRenderView : UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if pageIndex >= pageArray.count {
-            return
+        var realIndex = indexPath.row
+        if pageIndex < pageArray.count {
+            let range = pageArray[pageIndex]
+            realIndex = range[0] + indexPath.row
         }
-        
-        let range = pageArray[pageIndex]
-        let realIndex = range[0] + indexPath.row
         
         if let node = dataProvider.node(atIndexPath: realIndex) {
             if node.isKind(of: HtmlImageNode.classForCoder()) {
@@ -298,7 +294,6 @@ extension RamlRenderView : UICollectionViewDelegate {
                 }
             }
         }
-        
     }
 }
 
