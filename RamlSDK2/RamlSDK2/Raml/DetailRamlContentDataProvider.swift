@@ -704,9 +704,13 @@ class DetailRamlContentDataProvider: NSObject {
                         // TODO: 调整imageNode位置，拆分textNode
                         let lastnode = self.node(atIndexPath: end)
                         if let lastTextNode = lastnode as? HtmlTextNode {
-                            if let newTextNode = lastTextNode.split(pageHeight - fixPageHeight + 15, width: contentMaxWidth) {
+                            if let newTextNode = lastTextNode.split(pageHeight - fixPageHeight + 5, width: contentMaxWidth) {
                                 self.contentNodeArray.insert(newTextNode, at: end + 1)
                                 count += 1
+                            }
+                            else {
+                                end = i - 1
+                                calcHeight = nodeHeight
                             }
                         }
                     }
