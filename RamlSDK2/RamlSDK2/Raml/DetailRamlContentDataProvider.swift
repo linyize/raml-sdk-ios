@@ -115,7 +115,7 @@ class DetailRamlContentDataProvider: NSObject {
             if let htmlTextNode = htmlNode as? HtmlTextNode {
                 htmlTextNode.textLeftPadding = self.setting.textLeftPadding
                 htmlTextNode.textRightPadding = self.setting.textRightPadding
-                let size = sizeOfTextNode(node: htmlTextNode)
+                let size = htmlTextNode.sizeOfTextNode(contentMaxWidth)
                 htmlTextNode.contentWidth = self.contentMaxWidth
                 htmlTextNode.contentHeight = size.height
                 /*if previousNode == nil {
@@ -152,15 +152,6 @@ class DetailRamlContentDataProvider: NSObject {
             previousNode = htmlNode
         }
         self.contentNodeArray.append(contentsOf: nodeArray)
-    }
-    
-    func sizeOfTextNode(node:HtmlTextNode) -> CGSize {
-        if let str = node.contentString {
-            let maxWidth = contentMaxWidth - node.textLeftPadding - node.textRightPadding            
-            let bounds = str.boundingRect(with: CGSize(width:maxWidth, height:1000000), options: [.usesLineFragmentOrigin,.usesFontLeading], context: nil)
-            return bounds.size
-        }
-        return .zero
     }
     
     func parseModel(contentHtml:String, async: Bool) {                
@@ -679,44 +670,53 @@ class DetailRamlContentDataProvider: NSObject {
         return UIColor(red:0.60, green:0.60, blue:0.60, alpha:1.00)
     }
     
+    // 分页算法
     public func calcPage(_ fixPageHeight: CGFloat) -> Array<Array<Int>> {
         var pageArray:Array<Array<Int>> = []
         var calcHeight: CGFloat = 0
         var page : Int = 1
         var begin : Int = 0
         var end : Int = -1
-        let count = self.numberOfNode()
-        for i in 0 ... (count - 1) {
+        var i : Int = 0
+        var count = self.numberOfNode()
+        while i < count {
             let node = self.node(atIndexPath: i)
             let nodeHeight = node?.contentSize.height ?? 0
             calcHeight += nodeHeight
             if calcHeight > fixPageHeight {
-                let gap = fixPageHeight - calcHeight + nodeHeight;
-                let over = calcHeight - fixPageHeight;
+//                let gap = fixPageHeight - calcHeight + nodeHeight;
+//                let over = calcHeight - fixPageHeight;
                 var pageHeight = calcHeight;
-                if (gap > 0 && over > 0 && (gap - over > 100 || over < 100 || gap > fixPageHeight/2.0)) {
+//                if (gap > 0 && over > 0 && (gap - over > 100 || over < 100 || gap > fixPageHeight/2.0)) {
                     begin = end + 1
                     end = i
                     calcHeight = 0
-                }
-                else {
-                    begin = end + 1
-                    end = i - 1
-                    pageHeight = calcHeight - nodeHeight
-                    calcHeight = nodeHeight
-                }
-                
-                if pageHeight > fixPageHeight {
-                    // TODO: 调整imageNode位置，拆分textNode
-                    
-                }
+//                }
+//                else {
+//                    begin = end + 1
+//                    end = i - 1
+//                    pageHeight = calcHeight - nodeHeight
+//                    calcHeight = nodeHeight
+//                }
                 
                 if (end >= begin) {
+                    if pageHeight > fixPageHeight {
+                        // TODO: 调整imageNode位置，拆分textNode
+                        let lastnode = self.node(atIndexPath: end)
+                        if let lastTextNode = lastnode as? HtmlTextNode {
+                            if let newTextNode = lastTextNode.split(pageHeight - fixPageHeight + 15, width: contentMaxWidth) {
+                                self.contentNodeArray.insert(newTextNode, at: end + 1)
+                                count += 1
+                            }
+                        }
+                    }
+                    
                     NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
                     pageArray.append([begin, end])
                     page += 1
                 }
             }
+            i += 1
         }
         if count-1 > end {
             begin = end + 1
