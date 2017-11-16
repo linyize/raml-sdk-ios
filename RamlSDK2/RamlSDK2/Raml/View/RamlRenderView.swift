@@ -100,7 +100,7 @@ public class RamlRenderView: UIView {
                 let gap = fixPageHeight - calcHeight + nodeHeight;
                 let over = calcHeight - fixPageHeight;
                 var pageHeight = calcHeight;
-                if (gap > 0 && over > 0 && gap - over > 100) {
+                if (gap > 0 && over > 0 && (gap - over > 100 || over < 100 || gap > fixPageHeight/2.0)) {
                     begin = end + 1
                     end = i
                     calcHeight = 0
