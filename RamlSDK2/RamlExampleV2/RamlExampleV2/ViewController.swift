@@ -56,7 +56,7 @@ class ViewController: UIViewController {
 
 extension ViewController : RamlRenderViewDelegate {
     
-    func willLoadContent() {
+    func willLoadContent(_ view: UIView!) {
         ramlView.calcPage()
     }
     

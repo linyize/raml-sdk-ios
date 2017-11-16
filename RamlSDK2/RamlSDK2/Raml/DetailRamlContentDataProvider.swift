@@ -678,5 +678,54 @@ class DetailRamlContentDataProvider: NSObject {
     class func dateTextColor() -> UIColor {
         return UIColor(red:0.60, green:0.60, blue:0.60, alpha:1.00)
     }
-        
+    
+    public func calcPage(_ fixPageHeight: CGFloat) -> Array<Array<Int>> {
+        var pageArray:Array<Array<Int>> = []
+        var calcHeight: CGFloat = 0
+        var page : Int = 1
+        var begin : Int = 0
+        var end : Int = -1
+        let count = self.numberOfNode()
+        for i in 0 ... (count - 1) {
+            let node = self.node(atIndexPath: i)
+            let nodeHeight = node?.contentSize.height ?? 0
+            calcHeight += nodeHeight
+            if calcHeight > fixPageHeight {
+                let gap = fixPageHeight - calcHeight + nodeHeight;
+                let over = calcHeight - fixPageHeight;
+                var pageHeight = calcHeight;
+                if (gap > 0 && over > 0 && (gap - over > 100 || over < 100 || gap > fixPageHeight/2.0)) {
+                    begin = end + 1
+                    end = i
+                    calcHeight = 0
+                }
+                else {
+                    begin = end + 1
+                    end = i - 1
+                    pageHeight = calcHeight - nodeHeight
+                    calcHeight = nodeHeight
+                }
+                
+                if pageHeight > fixPageHeight {
+                    // TODO: 调整imageNode位置，拆分textNode
+                    
+                }
+                
+                if (end >= begin) {
+                    NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
+                    pageArray.append([begin, end])
+                    page += 1
+                }
+            }
+        }
+        if count-1 > end {
+            begin = end + 1
+            end = count - 1
+            if (end >= begin) {
+                NSLog("%f %d=(%d, %d)", calcHeight, page, begin, end)
+                pageArray.append([begin, end])
+            }
+        }
+        return pageArray
+    }
 }

@@ -12,8 +12,8 @@ import AVKit
 
 @objc public protocol RamlRenderViewDelegate : NSObjectProtocol {
     @objc optional func updatePage(_ index: Int, count: Int) -> Void
-    @objc optional func willLoadContent() -> Void
-    @objc optional func didLoadContent() -> Void
+    @objc optional func willLoadContent(_ view: UIView!) -> Void
+    @objc optional func didLoadContent(_ view: UIView!) -> Void
     @objc optional func tapPic(_ imageURL: String?) -> Void
     @objc optional func scrollViewDidScroll(_ scrollView: UIScrollView) -> Void
 }
@@ -25,8 +25,6 @@ public class RamlRenderView: UIView {
         let setting = RAMLRenderSetting()
         self.dataProvider = DetailRamlContentDataProvider(setting: setting)
         self.setting = setting
-        self.pageIndex = 0
-        self.pageArray = Array()
         super.init(frame: frame)
         setup()
         loadContent()
@@ -36,11 +34,16 @@ public class RamlRenderView: UIView {
         self.contentHtml = contentHtml         
         self.setting = setting
         self.dataProvider = DetailRamlContentDataProvider(setting: setting)
-        self.pageIndex = 0
-        self.pageArray = Array()
         super.init(frame: frame)
         setup()
         loadContent()
+    }
+    
+    public init(frame: CGRect, setting:RAMLRenderSetting) {
+        self.setting = setting
+        self.dataProvider = DetailRamlContentDataProvider(setting: setting)
+        super.init(frame: frame)
+        setup()
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -86,63 +89,19 @@ public class RamlRenderView: UIView {
     }
     
     public func calcPage() {
-        let fixPageHeight = frame.size.height
-        var calcHeight: CGFloat = 0
-        var page : Int = 1
-        var begin : Int = 0
-        var end : Int = -1
-        let count = dataProvider.numberOfNode()
-        for i in 0 ... (count - 1) {
-            let node = dataProvider.node(atIndexPath: i)
-            let nodeHeight = node?.contentSize.height ?? 0
-            calcHeight += nodeHeight
-            if calcHeight > fixPageHeight {
-                let gap = fixPageHeight - calcHeight + nodeHeight;
-                let over = calcHeight - fixPageHeight;
-                var pageHeight = calcHeight;
-                if (gap > 0 && over > 0 && (gap - over > 100 || over < 100 || gap > fixPageHeight/2.0)) {
-                    begin = end + 1
-                    end = i
-                    calcHeight = 0
-                }
-                else {
-                    begin = end + 1
-                    end = i - 1
-                    pageHeight = calcHeight - nodeHeight
-                    calcHeight = nodeHeight
-                }
-                
-                if pageHeight > fixPageHeight {
-                    // TODO: 调整imageNode位置，拆分textNode
-                }
-                
-                if (end >= begin) {
-                    NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
-                    pageArray.append([begin, end])
-                    page += 1
-                }
-            }
-        }
-        if count-1 > end {
-            begin = end + 1
-            end = count - 1
-            if (end >= begin) {
-                NSLog("%f %d=(%d, %d)", calcHeight, page, begin, end)
-                pageArray.append([begin, end])
-            }
-        }
+        pageArray = dataProvider.calcPage(frame.size.height)
         
         if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
             self.delegate?.updatePage!(pageIndex, count: pageArray.count)
         }
     }
     
-    func loadContent() {
+    public func loadContent() {
         dataProvider.htmlParseDoneBlock = {
             [weak self] in
             
             if (self?.delegate?.responds(to: #selector(RamlRenderViewDelegate.willLoadContent)))! {
-                self?.delegate?.willLoadContent!()
+                self?.delegate?.willLoadContent!(self!)
             }
             
             self?.collectionView.reloadData()
@@ -150,7 +109,7 @@ public class RamlRenderView: UIView {
 //            print("parse complete \(count)")
             
             if (self?.delegate?.responds(to: #selector(RamlRenderViewDelegate.didLoadContent)))! {
-                self?.delegate?.didLoadContent!()
+                self?.delegate?.didLoadContent!(self!)
             }
         }        
         dataProvider.parseModel(contentHtml: self.contentHtml, async: true)
@@ -185,10 +144,11 @@ public class RamlRenderView: UIView {
     }()
     var setting:RAMLRenderSetting
     let dataProvider:DetailRamlContentDataProvider
-    let contentHtml:String
+    
+    public var contentHtml:String = ""
 
-    public var pageIndex:Int
-    public var pageArray:Array<Array<Int>>
+    public var pageIndex:Int = 0
+    public var pageArray:Array<Array<Int>> = []
 
     public var delegate:RamlRenderViewDelegate?
 
