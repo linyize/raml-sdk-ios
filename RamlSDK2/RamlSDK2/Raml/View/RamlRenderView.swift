@@ -86,6 +86,7 @@ public class RamlRenderView: UIView {
     }
     
     public func calcPage() {
+        let fixPageHeight = frame.size.height
         var calcHeight: CGFloat = 0
         var page : Int = 1
         var begin : Int = 0
@@ -95,9 +96,9 @@ public class RamlRenderView: UIView {
             let node = dataProvider.node(atIndexPath: i)
             let nodeHeight = node?.contentSize.height ?? 0
             calcHeight += nodeHeight
-            if calcHeight > frame.size.height {
-                let gap = frame.size.height - calcHeight + nodeHeight;
-                let over = calcHeight - frame.size.height;
+            if calcHeight > fixPageHeight {
+                let gap = fixPageHeight - calcHeight + nodeHeight;
+                let over = calcHeight - fixPageHeight;
                 var pageHeight = calcHeight;
                 if (gap > 0 && over > 0 && gap - over > 100) {
                     begin = end + 1
@@ -109,6 +110,10 @@ public class RamlRenderView: UIView {
                     end = i - 1
                     pageHeight = calcHeight - nodeHeight
                     calcHeight = nodeHeight
+                }
+                
+                if pageHeight > fixPageHeight {
+                    // TODO: 调整imageNode位置，拆分textNode
                 }
                 
                 if (end >= begin) {
