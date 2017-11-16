@@ -39,15 +39,21 @@ class HtmlTextNode: HtmlNode {
             let targetHeight = contentHeight + top + bottom - over;
             var i:Int = len-1
             var calcHeight:CGFloat = contentHeight + top + bottom
-            while calcHeight > targetHeight {
+            var isLetter:Bool = true
+            while calcHeight > targetHeight || isLetter {
                 i -= 1
                 if (i == 0) {
                     NSLog("cannot split %@", str.string)
                     return nil
                 }
                 let oldString = str.attributedSubstring(from: NSMakeRange(0, i))
-                let size = self.sizeOfText(NSMutableAttributedString(attributedString: oldString), width: contentMaxWidth)
-                calcHeight = size.height + top + bottom
+                let laststr = oldString.string.substring(from: oldString.string.index(before: oldString.string.endIndex))
+                let characterset = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+                if laststr.rangeOfCharacter(from: characterset) == nil {
+                    isLetter = false
+                    let size = self.sizeOfText(NSMutableAttributedString(attributedString: oldString), width: contentMaxWidth)
+                    calcHeight = size.height + top + bottom
+                }
             }
             
             NSLog("%d split %@", i, str.string)
