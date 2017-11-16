@@ -24,7 +24,7 @@ class ViewController: UIViewController {
                 let setting = RAMLRenderSetting()
                 setting.fontColor = .black
                 setting.fontSize = 16
-                let view = RamlRenderView(frame: self.view.bounds, 
+                let view = RamlRenderView(frame: CGRect(x:0,y:64,width:self.view.bounds.size.width,height:self.view.bounds.size.height-64-49),
                                           contentHtml: contentHtml, 
                                           setting:setting)
                 view.delegate = self
