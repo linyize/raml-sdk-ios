@@ -684,20 +684,12 @@ class DetailRamlContentDataProvider: NSObject {
             let nodeHeight = node?.contentSize.height ?? 0
             calcHeight += nodeHeight
             if calcHeight > fixPageHeight {
-//                let gap = fixPageHeight - calcHeight + nodeHeight;
-//                let over = calcHeight - fixPageHeight;
-                var pageHeight = calcHeight;
-//                if (gap > 0 && over > 0 && (gap - over > 100 || over < 100 || gap > fixPageHeight/2.0)) {
-                    begin = end + 1
-                    end = i
-                    calcHeight = 0
-//                }
-//                else {
-//                    begin = end + 1
-//                    end = i - 1
-//                    pageHeight = calcHeight - nodeHeight
-//                    calcHeight = nodeHeight
-//                }
+                let gap = fixPageHeight - calcHeight + nodeHeight;
+                let over = calcHeight - fixPageHeight;
+                let pageHeight = calcHeight;
+                begin = end + 1
+                end = i
+                calcHeight = 0
                 
                 if (end >= begin) {
                     if pageHeight > fixPageHeight {
@@ -707,6 +699,15 @@ class DetailRamlContentDataProvider: NSObject {
                             if let newTextNode = lastTextNode.split(pageHeight - fixPageHeight + 5, width: contentMaxWidth) {
                                 self.contentNodeArray.insert(newTextNode, at: end + 1)
                                 count += 1
+                            }
+                            else {
+                                end = i - 1
+                                calcHeight = nodeHeight
+                            }
+                        }
+                        else if let lastImageNode = lastnode as? HtmlImageNode {
+                            if (gap > 0 && over > 0 && (gap - over > 100 || over < 100 || gap > fixPageHeight/2.0)) {
+                                calcHeight = 0
                             }
                             else {
                                 end = i - 1
