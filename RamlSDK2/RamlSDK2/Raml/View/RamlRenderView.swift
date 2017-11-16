@@ -86,49 +86,45 @@ public class RamlRenderView: UIView {
     }
     
     public func calcPage() {
-        var pageHeight: CGFloat = 0
+        var calcHeight: CGFloat = 0
         var page : Int = 1
         var begin : Int = 0
-        var end : Int = 0
+        var end : Int = -1
         let count = dataProvider.numberOfNode()
         for i in 0 ... (count - 1) {
             let node = dataProvider.node(atIndexPath: i)
             let nodeHeight = node?.contentSize.height ?? 0
-            pageHeight += nodeHeight
-            if pageHeight > frame.size.height {
-                begin = (end == 0) ? 0 : end + 1
-                if page > 1 && end == 0 {
-                    begin = 1
-                }
-                if i - 1 > 0 {
-                    let gap = frame.size.height - pageHeight + nodeHeight;
-                    let over = pageHeight - frame.size.height;
-                    if (gap - over > 100) {
-                        end = i
-                        NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
-                        pageHeight = 0
-                    }
-                    else {
-                        end = i - 1
-                        NSLog("%f %d=(%d, %d)", pageHeight - nodeHeight, page, begin, end)
-                        pageHeight = nodeHeight
-                    }
+            calcHeight += nodeHeight
+            if calcHeight > frame.size.height {
+                let gap = frame.size.height - calcHeight + nodeHeight;
+                let over = calcHeight - frame.size.height;
+                var pageHeight = calcHeight;
+                if (gap > 0 && over > 0 && gap - over > 100) {
+                    begin = end + 1
+                    end = i
+                    calcHeight = 0
                 }
                 else {
-                    end = 0
-                    NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
-                    pageHeight = 0
+                    begin = end + 1
+                    end = i - 1
+                    pageHeight = calcHeight - nodeHeight
+                    calcHeight = nodeHeight
                 }
                 
-                pageArray.append([begin, end])
-                page += 1
+                if (end >= begin) {
+                    NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
+                    pageArray.append([begin, end])
+                    page += 1
+                }
             }
         }
         if count-1 > end {
             begin = end + 1
             end = count - 1
-            NSLog("%f %d=(%d, %d)", pageHeight, page, begin, end)
-            pageArray.append([begin, end])
+            if (end >= begin) {
+                NSLog("%f %d=(%d, %d)", calcHeight, page, begin, end)
+                pageArray.append([begin, end])
+            }
         }
         
         if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {

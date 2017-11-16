@@ -56,6 +56,10 @@ class ViewController: UIViewController {
 
 extension ViewController : RamlRenderViewDelegate {
     
+    func willLoadContent() {
+        ramlView.calcPage()
+    }
+    
     func updatePage(_ index:Int, count:Int) {
         pageLabel.text = String(format: "%d/%d", index+1, count)
     }
