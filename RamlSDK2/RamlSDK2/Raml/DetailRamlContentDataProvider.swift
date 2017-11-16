@@ -11,7 +11,7 @@ import SwiftyJSON
 
 class DetailRamlContentDataProvider: NSObject {
       
-    var contentNodeArray = [HtmlNode]()
+    public var contentNodeArray = [HtmlNode]()
     var imageURLArray = [String]()
     var imageNodeArray = [HtmlImageNode]()    
     var contentHtml:String?

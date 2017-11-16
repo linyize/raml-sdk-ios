@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HtmlNode: NSObject {
+public class HtmlNode: NSObject {
     
     var contentHeight:CGFloat = 0
     var contentWidth:CGFloat = 0

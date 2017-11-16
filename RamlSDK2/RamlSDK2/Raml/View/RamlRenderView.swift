@@ -90,6 +90,7 @@ public class RamlRenderView: UIView {
     
     public func calcPage() {
         pageArray = dataProvider.calcPage(frame.size.height)
+        nodeArray = dataProvider.contentNodeArray
         
         if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
             self.delegate?.updatePage!(pageIndex, count: pageArray.count)
@@ -113,6 +114,20 @@ public class RamlRenderView: UIView {
             }
         }        
         dataProvider.parseModel(contentHtml: self.contentHtml, async: true)
+    }
+    
+    public func loadContentNodeArray(_ nodeArray:[HtmlNode]) {
+        dataProvider.contentNodeArray = nodeArray
+            
+        if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.willLoadContent)))! {
+            self.delegate?.willLoadContent!(self)
+        }
+        
+        self.collectionView.reloadData()
+        
+        if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.didLoadContent)))! {
+            self.delegate?.didLoadContent!(self)
+        }
     }
     
     //Action support
@@ -149,6 +164,7 @@ public class RamlRenderView: UIView {
 
     public var pageIndex:Int = 0
     public var pageArray:Array<Array<Int>> = []
+    public var nodeArray:[HtmlNode] = []
 
     public var delegate:RamlRenderViewDelegate?
 
