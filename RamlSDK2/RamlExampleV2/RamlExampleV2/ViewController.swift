@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let path = Bundle.main.path(forResource: "article8", ofType: "json") {
+        if let path = Bundle.main.path(forResource: "article7", ofType: "json") {
             do {
                 let str = try String(contentsOfFile: path)
                 let json = JSON(parseJSON:str)
@@ -47,6 +47,8 @@ class ViewController: UIViewController {
     }
     
     var ramlView:RamlRenderView!
+    
+    var loading = false
 }
 
 extension ViewController : RamlRenderViewDelegate {
@@ -57,6 +59,22 @@ extension ViewController : RamlRenderViewDelegate {
     
     func updatePage(_ index:Int, count:Int) {
         pageLabel.text = String(format: "%d/%d", index+1, count)
+    }
+    
+    func updateImageSize(_ view: UIView!) {
+        NSLog("updateImageSize")
+        
+        if loading {
+            return
+        }
+        loading = true
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+            NSLog("calcPage again")
+            self.ramlView.calcPage()
+            self.ramlView.collectionView.reloadData()
+            self.loading = false
+        }
     }
 }
 

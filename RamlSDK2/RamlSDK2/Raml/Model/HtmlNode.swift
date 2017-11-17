@@ -21,6 +21,8 @@ public class HtmlNode: NSObject {
     var textLeftPadding:CGFloat = 0
     var textRightPadding:CGFloat = 0
     
+    public var isUnknownSize = false
+    
     var rowHeight:CGFloat {
         get {
             return self.contentHeight + self.top + self.bottom

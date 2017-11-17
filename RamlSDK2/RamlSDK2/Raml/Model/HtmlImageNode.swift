@@ -13,7 +13,6 @@ class HtmlImageNode: HtmlNode {
     var imageURL:String?
     var imageWidth:CGFloat = 0
     var imageHeight:CGFloat = 0
-    var isUnknownSize = false
     var titleTextNode:HtmlTextNode?
     
     override var rowHeight:CGFloat {
@@ -24,7 +23,7 @@ class HtmlImageNode: HtmlNode {
             if (cachedImage != nil) {
                 self.isUnknownSize = false
                 self.imageWidth = self.contentWidth
-                self.imageHeight = (cachedImage?.size.height ?? 200) * (self.imageWidth/(cachedImage?.size.width ?? 200))
+                self.imageHeight = (cachedImage?.size.height ?? 100) * (self.imageWidth/(cachedImage?.size.width ?? 100))
                 self.contentHeight = self.imageHeight
             }
             return self.contentHeight + self.top + self.bottom

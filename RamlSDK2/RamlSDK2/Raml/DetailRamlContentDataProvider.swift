@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftyJSON
+import SDWebImage
 
 class DetailRamlContentDataProvider: NSObject {
       
@@ -363,8 +364,17 @@ class DetailRamlContentDataProvider: NSObject {
                 imageNode.imageHeight = ceil(imageNode.imageWidth / CGFloat(originalWidth / originalHeight))                
                 imageNode.contentHeight = imageNode.imageHeight
             } else {
-                imageNode.isUnknownSize = true
-                imageNode.contentHeight = 100
+                let cacheKey = SDWebImageManager.shared().cacheKey(for: URL(string: url))
+                let cachedImage = SDImageCache.shared().imageFromCache(forKey: cacheKey)
+                if (cachedImage != nil) {
+                    imageNode.imageWidth = self.contentMaxWidth
+                    imageNode.imageHeight = (cachedImage?.size.height ?? 100) * (imageNode.imageWidth/(cachedImage?.size.width ?? 100))
+                    imageNode.contentHeight = imageNode.imageHeight
+                }
+                else {
+                    imageNode.isUnknownSize = true
+                    imageNode.contentHeight = 100
+                }
             }
             imageNode.contentWidth = self.contentMaxWidth
             imageNode.rawJsonString = rawString
@@ -373,7 +383,7 @@ class DetailRamlContentDataProvider: NSObject {
             
             if let title = image["title"].string, title != "" {
                 let titleTextNode = HtmlTextNode()
-                var imageTitle = title
+                let imageTitle = title
 //                if title.range(of: "%") != nil {
 //                    imageTitle = StringHelper.string(byDecodingURLFormat:title)
 //                }
@@ -673,16 +683,26 @@ class DetailRamlContentDataProvider: NSObject {
     }
 
     // 分页算法
-    public func calcPage(_ fixPageHeight: CGFloat) -> Array<Array<Int>> {
-        var pageArray:Array<Array<Int>> = []
+    public func calcPage(_ fixPageHeight: CGFloat, pageArray oldPageArray: Array<Array<Int>>) -> Array<Array<Int>> {
+        
+        let beginIndex = oldPageArray.last?[0] ?? 0
+        
+        var haveUnknownSize = false
+        var pageArray:Array<Array<Int>> = oldPageArray
+        if !pageArray.isEmpty {
+            pageArray.removeLast()
+        }
         var calcHeight: CGFloat = 0
-        var page : Int = 1
+        var page : Int = pageArray.count + 1
         var begin : Int = 0
-        var end : Int = -1
-        var i : Int = 0
+        var end : Int = (beginIndex == 0) ? -1 : beginIndex - 1
+        var i : Int = beginIndex
         var count = self.numberOfNode()
         while i < count {
             let node = self.node(atIndexPath: i)
+            if node?.isUnknownSize ?? false {
+                haveUnknownSize = true
+            }
             let nodeHeight = node?.contentSize.height ?? 0
             calcHeight += nodeHeight
             if calcHeight > fixPageHeight {
@@ -746,6 +766,10 @@ class DetailRamlContentDataProvider: NSObject {
                 }
             }
             i += 1
+            if haveUnknownSize {
+                NSLog("haveUnknownSize stop calcPage")
+                break
+            }
         }
         if count-1 > end {
             begin = end + 1

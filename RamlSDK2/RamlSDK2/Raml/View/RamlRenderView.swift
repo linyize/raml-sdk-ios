@@ -11,6 +11,7 @@ import AVFoundation
 import AVKit
 
 @objc public protocol RamlRenderViewDelegate : NSObjectProtocol {
+    @objc optional func updateImageSize(_ view: UIView!) -> Void
     @objc optional func updatePage(_ index: Int, count: Int) -> Void
     @objc optional func willLoadContent(_ view: UIView!) -> Void
     @objc optional func didLoadContent(_ view: UIView!) -> Void
@@ -89,7 +90,7 @@ public class RamlRenderView: UIView {
     }
     
     public func calcPage() {
-        pageArray = dataProvider.calcPage(frame.size.height)
+        pageArray = dataProvider.calcPage(frame.size.height, pageArray: pageArray)
         nodeArray = dataProvider.contentNodeArray
         
         if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.updatePage(_:count:))))! {
@@ -106,8 +107,6 @@ public class RamlRenderView: UIView {
             }
             
             self?.collectionView.reloadData()
-//            let count = self?.dataProvider.numberOfNode()
-//            print("parse complete \(count)")
             
             if (self?.delegate?.responds(to: #selector(RamlRenderViewDelegate.didLoadContent)))! {
                 self?.delegate?.didLoadContent!(self!)
@@ -123,6 +122,7 @@ public class RamlRenderView: UIView {
             self.delegate?.willLoadContent!(self)
         }
         
+        self.collectionView.contentOffset = .zero
         self.collectionView.reloadData()
         
         if (self.delegate?.responds(to: #selector(RamlRenderViewDelegate.didLoadContent)))! {
@@ -196,8 +196,15 @@ extension RamlRenderView : UICollectionViewDataSource {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailImageCell", for: indexPath) as? RAMLDetailImageCell {
                     cell.config(imageNode: imageNode)
                     cell.reloadUnknowSizeBlock = {
-                        [weak self] in        
-                        self?.collectionView.reloadItems(at: [indexPath])
+                        [weak self] in
+                        
+                        if self?.pageArray.count == 0 {
+                            self?.collectionView.reloadItems(at: [indexPath])
+                        }
+                        
+                        if (self?.delegate?.responds(to: #selector(RamlRenderViewDelegate.updateImageSize(_:))))! {
+                            self?.delegate?.updateImageSize!(self)
+                        }
                     }
                     return cell
                 }

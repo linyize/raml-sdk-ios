@@ -56,8 +56,6 @@ class HtmlTextNode: HtmlNode {
                 }
             }
             
-            NSLog("%d split %@", i, str.string)
-            
             let newlen = len - i
             let newString = str.attributedSubstring(from: NSMakeRange(i, newlen))
             
