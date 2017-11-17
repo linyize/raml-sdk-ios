@@ -38,7 +38,9 @@ class RAMLDetailImageCell: UICollectionViewCell {
                     imageNode.contentHeight = imageNode.imageHeight
                 }
                 else {
-                    imageView.sd_setImage(with: url, completed: {[weak self, unowned imageNode] (image, error, type, url) in
+                    let bundle = Bundle(for: RAMLDetailImageCell.self)
+                    let placeholder = UIImage(named: "placeholder", in: bundle, compatibleWith: nil)
+                    imageView.sd_setImage(with: url, placeholderImage: placeholder, options: .highPriority, completed: {[weak self, unowned imageNode] (image, error, type, url) in
                         if let image = image, let strongifySelf = self {
                             imageNode.isUnknownSize = false
                             imageNode.imageWidth = imageNode.contentWidth

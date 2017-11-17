@@ -37,6 +37,8 @@
 		7FF2876A1F3DF095009235DE /* audio_card_icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7FF287641F3DF095009235DE /* audio_card_icon@3x.png */; };
 		7FF2876B1F3DF095009235DE /* audio_card_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7FF287651F3DF095009235DE /* audio_card_icon@2x.png */; };
 		7FFD56C31F3DBF9D000E617A /* RamlSDK2.h in Headers */ = {isa = PBXBuildFile; fileRef = 7FFD56C11F3DBF9D000E617A /* RamlSDK2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9C4E06B71FBF2331003F8470 /* placeholder@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9C4E06B51FBF2330003F8470 /* placeholder@3x.png */; };
+		9C4E06B81FBF2331003F8470 /* placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9C4E06B61FBF2331003F8470 /* placeholder@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,6 +87,8 @@
 		7FFD56CF1F3DC225000E617A /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = "Carthage/Checkouts/SDWebImage/build/Debug-iphoneos/SDWebImage.framework"; sourceTree = "<group>"; };
 		7FFD56D01F3DC22E000E617A /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = "Carthage/Checkouts/SDWebImage/build/Debug-iphoneos/SDWebImage.framework"; sourceTree = "<group>"; };
 		7FFD56D11F3DC236000E617A /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = "Carthage/Checkouts/SDWebImage/build/Debug-iphoneos/SDWebImage.framework"; sourceTree = "<group>"; };
+		9C4E06B51FBF2330003F8470 /* placeholder@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "placeholder@3x.png"; sourceTree = "<group>"; };
+		9C4E06B61FBF2331003F8470 /* placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "placeholder@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +167,8 @@
 		7FF2875F1F3DF095009235DE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				9C4E06B61FBF2331003F8470 /* placeholder@2x.png */,
+				9C4E06B51FBF2330003F8470 /* placeholder@3x.png */,
 				7FF287601F3DF095009235DE /* video_player@3x.png */,
 				7FF287611F3DF095009235DE /* video_player@2x.png */,
 				7FF287621F3DF095009235DE /* audio_card_icon.png */,
@@ -292,7 +298,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C4E06B71FBF2331003F8470 /* placeholder@3x.png in Resources */,
 				7FF2876B1F3DF095009235DE /* audio_card_icon@2x.png in Resources */,
+				9C4E06B81FBF2331003F8470 /* placeholder@2x.png in Resources */,
 				7FF287661F3DF095009235DE /* video_player@3x.png in Resources */,
 				7FF2876A1F3DF095009235DE /* audio_card_icon@3x.png in Resources */,
 				7FF287681F3DF095009235DE /* audio_card_icon.png in Resources */,
