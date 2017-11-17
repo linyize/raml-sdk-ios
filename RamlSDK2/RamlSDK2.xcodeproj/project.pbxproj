@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		7F30F0571FBC202700C53BA0 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F30F0591FBC202700C53BA0 /* SDWebImage.framework */; };
 		7F30F0581FBC202700C53BA0 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F30F05A1FBC202700C53BA0 /* SwiftyJSON.framework */; };
-		7F94560C1FBC309700BDC208 /* TTTAttributedLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F94560D1FBC309700BDC208 /* TTTAttributedLabel.framework */; };
 		7FB585261F7CEEE300A994C0 /* RAMLRenderSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB585241F7CE94100A994C0 /* RAMLRenderSetting.swift */; };
 		7FF2874B1F3DF07A009235DE /* DetailRamlContentDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF287331F3DF07A009235DE /* DetailRamlContentDataProvider.swift */; };
 		7FF2874C1F3DF07A009235DE /* NSAttributeString+DetailTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF287351F3DF07A009235DE /* NSAttributeString+DetailTheme.swift */; };
@@ -93,7 +92,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7F94560C1FBC309700BDC208 /* TTTAttributedLabel.framework in Frameworks */,
 				7F30F0571FBC202700C53BA0 /* SDWebImage.framework in Frameworks */,
 				7F30F0581FBC202700C53BA0 /* SwiftyJSON.framework in Frameworks */,
 			);
