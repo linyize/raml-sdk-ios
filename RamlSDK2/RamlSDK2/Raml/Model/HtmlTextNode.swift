@@ -48,7 +48,7 @@ class HtmlTextNode: HtmlNode {
                 }
                 let oldString = str.attributedSubstring(from: NSMakeRange(0, i))
                 let laststr = oldString.string.substring(from: oldString.string.index(before: oldString.string.endIndex))
-                let characterset = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+                let characterset = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
                 if laststr.rangeOfCharacter(from: characterset) == nil {
                     isLetter = false
                     let size = self.sizeOfText(NSMutableAttributedString(attributedString: oldString), width: contentMaxWidth)

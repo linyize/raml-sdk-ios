@@ -671,7 +671,7 @@ class DetailRamlContentDataProvider: NSObject {
     class func dateTextColor() -> UIColor {
         return UIColor(red:0.60, green:0.60, blue:0.60, alpha:1.00)
     }
-    
+
     // 分页算法
     public func calcPage(_ fixPageHeight: CGFloat) -> Array<Array<Int>> {
         var pageArray:Array<Array<Int>> = []
@@ -688,15 +688,37 @@ class DetailRamlContentDataProvider: NSObject {
             if calcHeight > fixPageHeight {
                 let gap = fixPageHeight - calcHeight + nodeHeight;
                 let over = calcHeight - fixPageHeight;
-                let pageHeight = calcHeight;
+                var pageHeight = calcHeight;
                 begin = end + 1
-                end = i
-                calcHeight = 0
+                if (gap > 0 && over > 0 && (gap > fixPageHeight/2.0)) {
+                    end = i
+                    calcHeight = 0
+                }
+                else {
+                    end = i - 1
+                    calcHeight = nodeHeight
+                    pageHeight -= nodeHeight
+                }
                 
                 if (end >= begin) {
                     if pageHeight > fixPageHeight {
-                        // TODO: 调整imageNode位置，拆分textNode
+                        var lastTextNode:HtmlTextNode! = nil
+                        var j: Int = end
+                        while j >= begin {
+                            let node = self.node(atIndexPath: j)
+                            if let textNode = node as? HtmlTextNode {
+                                lastTextNode = textNode
+                                break
+                            }
+                            j -= 1
+                        }
+                        if j < end && lastTextNode != nil {
+                            // swap textNode with endNode
+                            self.contentNodeArray.swapAt(j, end)
+                        }
+                        
                         let lastnode = self.node(atIndexPath: end)
+                        let nodeHeight = lastnode?.contentSize.height ?? 0
                         if let lastTextNode = lastnode as? HtmlTextNode {
                             if let newTextNode = lastTextNode.split(pageHeight - fixPageHeight + 5, width: contentMaxWidth) {
                                 self.contentNodeArray.insert(newTextNode, at: end + 1)
@@ -705,15 +727,7 @@ class DetailRamlContentDataProvider: NSObject {
                             else {
                                 end = i - 1
                                 calcHeight = nodeHeight
-                            }
-                        }
-                        else {
-                            if (gap > 0 && over > 0 && (gap - over > 100 || over < 100 || gap > fixPageHeight/2.0)) {
-                                calcHeight = 0
-                            }
-                            else {
-                                end = i - 1
-                                calcHeight = nodeHeight
+                                pageHeight -= nodeHeight
                             }
                         }
                     }
