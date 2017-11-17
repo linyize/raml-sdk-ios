@@ -738,7 +738,7 @@ class DetailRamlContentDataProvider: NSObject {
                             }
                             j -= 1
                         }
-                        if j < end && lastTextNode != nil {
+                        if j < end && lastTextNode != nil && j > 1 {
                             // swap textNode with endNode
                             let textNode:HtmlTextNode = lastTextNode
                             self.contentNodeArray.remove(at: j)
