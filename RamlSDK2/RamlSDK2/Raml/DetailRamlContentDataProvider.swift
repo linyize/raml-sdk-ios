@@ -686,18 +686,24 @@ class DetailRamlContentDataProvider: NSObject {
             let nodeHeight = node?.contentSize.height ?? 0
             calcHeight += nodeHeight
             if calcHeight > fixPageHeight {
-                let gap = fixPageHeight - calcHeight + nodeHeight;
-                let over = calcHeight - fixPageHeight;
                 var pageHeight = calcHeight;
                 begin = end + 1
-                if (gap > 0 && over > 0 && (gap > fixPageHeight/2.0)) {
+                if node is HtmlTextNode {
                     end = i
                     calcHeight = 0
                 }
                 else {
-                    end = i - 1
-                    calcHeight = nodeHeight
-                    pageHeight -= nodeHeight
+                    let gap = fixPageHeight - calcHeight + nodeHeight;
+                    let over = calcHeight - fixPageHeight;
+                    if (gap > 0 && over > 0 && gap > fixPageHeight/2.0) {
+                        end = i
+                        calcHeight = 0
+                    }
+                    else {
+                        end = i - 1
+                        calcHeight = nodeHeight
+                        pageHeight -= nodeHeight
+                    }
                 }
                 
                 if (end >= begin) {
@@ -714,7 +720,9 @@ class DetailRamlContentDataProvider: NSObject {
                         }
                         if j < end && lastTextNode != nil {
                             // swap textNode with endNode
-                            self.contentNodeArray.swapAt(j, end)
+                            let textNode:HtmlTextNode = lastTextNode
+                            self.contentNodeArray.remove(at: j)
+                            self.contentNodeArray.insert(textNode, at: end)
                         }
                         
                         let lastnode = self.node(atIndexPath: end)
