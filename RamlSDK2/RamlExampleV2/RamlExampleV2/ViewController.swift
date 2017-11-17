@@ -32,11 +32,6 @@ class ViewController: UIViewController {
                 self.view.insertSubview(view, at: 0)
                 
                 self.ramlView = view
-                
-//                view.onLinkTappedActionBlock = {
-//                    [weak self] url in
-//                    print(url)
-//                }
             } catch {
                 
             }

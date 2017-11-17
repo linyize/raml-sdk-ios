@@ -253,7 +253,9 @@ class DetailRamlContentDataProvider: NSObject {
                                                            shouldSmallFont: shouldSmallFont, 
                                                            fontSize:fontSize, font:_font, fontColor:fontColor)
             }
-            do {                
+            
+            // 识别文本中的网址
+            do {
                 let dataDector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
                 let color:UIColor = fontColor
                 dataDector.enumerateMatches(in: mutableAttr.string, options: [], range: NSMakeRange(0, mutableAttr.length), using: { (result, flag, stop) in
@@ -265,17 +267,17 @@ class DetailRamlContentDataProvider: NSObject {
                             }
                         })
                         if !foundLink {
-                            if let dict = NSMutableAttributedString.mangoHtmlHrefLinkAttribute(font,
-                                                                                        fontColor:color) as NSDictionary as? [String: AnyObject] {
-                                mutableAttr.addAttributes([NSLinkAttributeName: url], range: result.range)
-                                mutableAttr.addAttributes(dict, range: result.range)                            
-                            }    
+                            mutableAttr.addAttributes([NSLinkAttributeName: url], range: result.range)
+//                            if let dict = NSMutableAttributedString.mangoHtmlHrefLinkAttribute(font,
+//                                                                                        fontColor:color) as NSDictionary as? [String: AnyObject] {
+//                                mutableAttr.addAttributes(dict, range: result.range)
+//                            }
                         }
-                        
-                    }                     
+
+                    }
                 })
-            }catch {                
-            }                        
+            }catch {
+            }
             textNode.shouldAlignCenter = shouldAlignCenter
             textNode.listIndentLevel = blockLevel
             textNode.contentString = mutableAttr
@@ -322,10 +324,10 @@ class DetailRamlContentDataProvider: NSObject {
                 mutableAttr.addAttributes([NSFontAttributeName: smallTextFont()], range: range)
             } else if tag == "a", let href = subJson["source"].string, let url = URL(string: href) {
                 mutableAttr.addAttributes([NSLinkAttributeName: url], range: range)
-                if let dict = NSMutableAttributedString.mangoHtmlHrefLinkAttribute(font,
-                                                                            fontColor:fontColor) as NSDictionary as? [String: AnyObject] {
-                    mutableAttr.addAttributes(dict, range: range)
-                }
+//                if let dict = NSMutableAttributedString.mangoHtmlHrefLinkAttribute(font,
+//                                                                            fontColor:fontColor) as NSDictionary as? [String: AnyObject] {
+//                    mutableAttr.addAttributes(dict, range: range)
+//                }
             } else if tag == "img", let source = subJson["source"].string {
                 let attachment = InnerLineImageAttachment()
                 attachment.image = UIImage(named: "image_space")
@@ -705,7 +707,7 @@ class DetailRamlContentDataProvider: NSObject {
                                 calcHeight = nodeHeight
                             }
                         }
-                        else if let lastImageNode = lastnode as? HtmlImageNode {
+                        else {
                             if (gap > 0 && over > 0 && (gap - over > 100 || over < 100 || gap > fixPageHeight/2.0)) {
                                 calcHeight = 0
                             }

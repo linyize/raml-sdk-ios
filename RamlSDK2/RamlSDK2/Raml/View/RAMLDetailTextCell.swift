@@ -8,7 +8,6 @@
 
 import UIKit
 import SDWebImage
-//import TTTAttributedLabel
 
 class RAMLDetailTextCell: UICollectionViewCell {
     
@@ -19,16 +18,8 @@ class RAMLDetailTextCell: UICollectionViewCell {
     }
     
     func setup() {
-        contentView.addSubview(textLabel)
+        contentView.addSubview(textView)
         contentView.backgroundColor = .clear
-    
-//        textLabel.isUserInteractionEnabled = true
-//        textLabel.delegate = self
-//        textLabel.lineBreakMode = .byTruncatingTail
-//        textLabel.numberOfLines = 0
-//
-//        let dashed = NSUnderlineStyle.patternDot.rawValue | NSUnderlineStyle.styleSingle.rawValue
-//        textLabel.linkAttributes = [NSUnderlineStyleAttributeName: NSNumber(value: dashed)]
     }
     
     func magazineLogo(image: UIImage) -> UIImage {
@@ -59,7 +50,7 @@ class RAMLDetailTextCell: UICollectionViewCell {
                                                     using: {[weak self, weak attachment] value, _, _ in
                                                         if let attach = value as? InnerLineImageAttachment, attach.imageURL == attachment?.imageURL {
                                                             attachment?.image = magazineLogo
-                                                            self?.textLabel.setNeedsDisplay()
+                                                            self?.textView.setNeedsDisplay()
                                                         }
         })
     }
@@ -68,16 +59,7 @@ class RAMLDetailTextCell: UICollectionViewCell {
         setup()
         self.textNode = textNode
         if let contentString = textNode.contentString {
-            textLabel.attributedText = contentString
-//            contentString.enumerateAttribute(NSLinkAttributeName, in: NSRange(location: 0, length: contentString.length), options: NSAttributedString.EnumerationOptions.reverse, using: {
-//                [weak self] (value, range, stop) in
-//                guard let value = value else {
-//                    return
-//                }
-//                if let url = value as? URL {
-//                    _ = self?.textLabel.addLink(to: url, with: range)
-//                }
-//            })
+            textView.attributedText = contentString
         }
         for attach in textNode.imageAttachArray {
             let urlStr = attach.imageURL
@@ -98,32 +80,32 @@ class RAMLDetailTextCell: UICollectionViewCell {
         let top = textNode?.top ?? 0
         let bottom = textNode?.bottom ?? 0
         let maxWidth = frame.size.width - rightPadding - leftPadding
-        textLabel.frame = CGRect(x: leftPadding, y: top, width: maxWidth, height: frame.size.height - top - bottom)
+        textView.frame = CGRect(x: leftPadding, y: top, width: maxWidth, height: frame.size.height - top - bottom + 2)
     }
     
     // Other
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    var onLinkTappedActionBlock: ((URL) -> Void)?
-    
-//    lazy var textLabel: TTTAttributedLabel = {
-//        let label = TTTAttributedLabel(frame: .zero)
-//        return label
-//    }()
-    
-    lazy var textLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.backgroundColor = .clear
-        return label
+ 
+    lazy var textView: UITextView = {
+        let textView = UITextView()
+        textView.delegate = self
+        textView.backgroundColor = .clear
+        textView.isEditable = false
+        textView.contentInset = .zero
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.isScrollEnabled = false
+        textView.linkTextAttributes = [NSForegroundColorAttributeName:UIColor.blue,
+                                       NSUnderlineColorAttributeName:UIColor.lightGray,
+                                       NSUnderlineStyleAttributeName:NSNumber(value: NSUnderlineStyle.styleSingle.rawValue)]
+        return textView
     }()
 }
 
-//extension RAMLDetailTextCell : TTTAttributedLabelDelegate {
-//    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {        
-//        onLinkTappedActionBlock?(url)
-//    }   
-//}
-
+extension RAMLDetailTextCell : UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
+        return false
+    }
+}

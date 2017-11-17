@@ -167,9 +167,6 @@ public class RamlRenderView: UIView {
     public var nodeArray:[HtmlNode] = []
 
     public var delegate:RamlRenderViewDelegate?
-
-//    public var onLinkTappedActionBlock: ((URL) -> Void)?
-
     public var viewController:UIViewController?
 }
 
@@ -192,10 +189,6 @@ extension RamlRenderView : UICollectionViewDataSource {
             if let textNode = node as? HtmlTextNode {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RAMLDetailTextCell", for: indexPath) as? RAMLDetailTextCell {
                     cell.config(textNode: textNode)
-//                    cell.onLinkTappedActionBlock = {
-//                        [weak self] url in
-//                        self?.onLinkTappedActionBlock?(url)
-//                    }
                     return cell
                 } 
             }

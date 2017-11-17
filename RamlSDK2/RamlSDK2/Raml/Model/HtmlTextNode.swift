@@ -81,6 +81,9 @@ class HtmlTextNode: HtmlNode {
             contentString = NSMutableAttributedString(attributedString: str.attributedSubstring(from: NSMakeRange(0, i)))
             let size2 = self.sizeOfTextNode(contentMaxWidth)
             contentHeight = size2.height
+            
+            NSLog("split 1 %@", contentString?.string ?? "")
+            NSLog("split 2 %@", newString.string)
             return newNode
         }
         return nil
