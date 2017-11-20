@@ -26,7 +26,10 @@ class RAMLDetailImageCell: UICollectionViewCell {
     func config(imageNode:HtmlImageNode) {
         self.imageNode = imageNode        
         if let urlStr = imageNode.imageURL, let url = URL(string:urlStr){
-            imageView.sd_setShowActivityIndicatorView(true)
+            let bundle = Bundle(for: RAMLDetailImageCell.self)
+            let placeholder = UIImage(named: "placeholder", in: bundle, compatibleWith: nil)
+            
+            //imageView.sd_setShowActivityIndicatorView(true)
             if imageNode.isUnknownSize {
                 let cacheKey = SDWebImageManager.shared().cacheKey(for: url)
                 let cachedImage = SDImageCache.shared().imageFromCache(forKey: cacheKey)
@@ -38,10 +41,10 @@ class RAMLDetailImageCell: UICollectionViewCell {
                     imageNode.contentHeight = imageNode.imageHeight
                 }
                 else {
-                    let bundle = Bundle(for: RAMLDetailImageCell.self)
-                    let placeholder = UIImage(named: "placeholder", in: bundle, compatibleWith: nil)
+                    imageView.contentMode = .center
                     imageView.sd_setImage(with: url, placeholderImage: placeholder, options: .highPriority, completed: {[weak self, unowned imageNode] (image, error, type, url) in
                         if let image = image, let strongifySelf = self {
+                            strongifySelf.imageView.contentMode = .scaleAspectFill
                             imageNode.isUnknownSize = false
                             imageNode.imageWidth = imageNode.contentWidth
                             imageNode.imageHeight = image.size.height * (imageNode.imageWidth/image.size.width)
@@ -53,7 +56,12 @@ class RAMLDetailImageCell: UICollectionViewCell {
                 }
             }
             else {
-                imageView.sd_setImage(with: url)
+                imageView.contentMode = .center
+                imageView.sd_setImage(with: url, placeholderImage: placeholder, options: .highPriority, completed: {[weak self] (image, error, type, url) in
+                    if let strongifySelf = self {
+                        strongifySelf.imageView.contentMode = .scaleAspectFill
+                    }
+                })
             }
             
         }

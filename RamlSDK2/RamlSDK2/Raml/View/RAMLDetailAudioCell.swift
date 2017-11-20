@@ -29,9 +29,17 @@ class RAMLDetailAudioCell: UICollectionViewCell {
     func config(multimediaNode:HtmlMultimediaNode) {
         self.multimediaNode = multimediaNode
         
-        if let urlStr = multimediaNode.coverImageURL, let url = URL(string:urlStr){            
-            imageView.sd_setShowActivityIndicatorView(true)
-            imageView.sd_setImage(with: url)
+        if let urlStr = multimediaNode.coverImageURL, let url = URL(string:urlStr){
+            let bundle = Bundle(for: RAMLDetailImageCell.self)
+            let placeholder = UIImage(named: "placeholder", in: bundle, compatibleWith: nil)
+            
+            //imageView.sd_setShowActivityIndicatorView(true)
+            imageView.contentMode = .center
+            imageView.sd_setImage(with: url, placeholderImage: placeholder, options: .highPriority, completed: {[weak self] (image, error, type, url) in
+                if let strongifySelf = self {
+                    strongifySelf.imageView.contentMode = .scaleAspectFill
+                }
+            })
         }
         imageView.frame = CGRect(x: 20, y: 0, width: multimediaNode.coverSize.width, height: multimediaNode.coverSize.height)
         if let titleNode = multimediaNode.titleTextNode {

@@ -28,8 +28,17 @@ class RAMLDetailVideoCell: UICollectionViewCell {
         self.multimediaNode = multimediaNode
         
         if let urlStr = multimediaNode.coverImageURL, let url = URL(string:urlStr){
-            imageView.sd_setShowActivityIndicatorView(true)
-            imageView.sd_setImage(with: url)
+            
+            let bundle = Bundle(for: RAMLDetailImageCell.self)
+            let placeholder = UIImage(named: "placeholder", in: bundle, compatibleWith: nil)
+            
+            //imageView.sd_setShowActivityIndicatorView(true)
+            imageView.contentMode = .center
+            imageView.sd_setImage(with: url, placeholderImage: placeholder, options: .highPriority, completed: {[weak self] (image, error, type, url) in
+                if let strongifySelf = self {
+                    strongifySelf.imageView.contentMode = .scaleAspectFill
+                }
+            })
         }
         imageView.frame = CGRect(x: 0, y: multimediaNode.top, width: self.bounds.size.width, height: multimediaNode.contentHeight)
     }
